@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Caption Lab — Reels Typography Tool</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Archivo+Black&family=Oswald:wght@400;700&family=Teko:wght@400;600&family=Big+Shoulders+Display:wght@700;900&family=Passion+One:wght@700;900&family=Yellowtail&family=Caveat:wght@600;700&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0b0605;
+    --panel:#150a0a;
+    --panel-2:#1c0e0d;
+    --line:#3a1414;
+    --red:#e2101f;
+    --red-deep:#7a0000;
+    --white:#f4efe9;
+    --muted:#a98d8a;
+    --font-ui:'Space Grotesk', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--white);font-family:var(--font-ui);}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(226,16,31,0.16), transparent 60%),
+      var(--bg);
+  }
+  header{
+    padding:22px 28px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    margin:0;
+    font-family:'Anton', sans-serif;
+    font-size:26px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+  header h1 span{color:var(--red);}
+  header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:780px;line-height:1.5;}
+  header p code{background:#000;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--white);}
+
+  .layout{
+    display:grid;
+    grid-template-columns:380px 1fr 300px;
+    gap:0;
+    align-items:start;
+  }
+  @media (max-width:1180px){
+    .layout{grid-template-columns:1fr;}
+  }
+
+  .col{
+    padding:18px;
+    border-right:1px solid var(--line);
+    min-height:calc(100vh - 84px);
+  }
+  .col:last-child{border-right:none;}
+
+  details{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  details[open]{background:var(--panel-2);}
+  summary{
+    cursor:pointer;
+    padding:11px 14px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--white);
+    list-style:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary:after{content:'+';color:var(--red);font-size:16px;}
+  details[open] summary:after{content:'–';}
+  .body{padding:4px 14px 14px;display:flex;flex-direction:column;gap:10px;}
+
+  label.field{display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:var(--muted);}
+  label.field b{color:var(--white);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .row{display:flex;gap:8px;}
+  .row > *{flex:1;}
+
+  textarea, select, input[type=text], input[type=number]{
+    background:#0a0404;
+    border:1px solid var(--line);
+    color:var(--white);
+    border-radius:6px;
+    padding:8px 9px;
+    font-family:var(--font-ui);
+    font-size:13px;
+    width:100%;
+  }
+  textarea{resize:vertical;min-height:110px;line-height:1.5;}
+  textarea:focus, select:focus, input:focus{outline:1px solid var(--red);}
+
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;height:4px;border-radius:2px;
+    background:linear-gradient(90deg,var(--red),var(--red-deep));
+    cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+    background:var(--white);border:2px solid var(--red);cursor:pointer;
+  }
+  .valline{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+  .valline b{color:var(--red);font-variant-numeric:tabular-nums;}
+
+  .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .seg button{
+    flex:1;background:#0a0404;color:var(--muted);border:none;padding:8px 4px;
+    font-size:11px;cursor:pointer;font-family:var(--font-ui);border-right:1px solid var(--line);
+  }
+  .seg button:last-child{border-right:none;}
+  .seg button.active{background:var(--red);color:#fff;font-weight:700;}
+
+  button.btn{
+    background:#0a0404;border:1px solid var(--line);color:var(--white);
+    border-radius:6px;padding:9px 10px;font-size:12px;cursor:pointer;font-family:var(--font-ui);
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  button.btn:hover{border-color:var(--red);}
+  button.btn.primary{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+  button.btn.primary:hover{background:#ff2436;}
+  button.btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+  .swatches{display:flex;gap:8px;flex-wrap:wrap;}
+  .swatch{
+    width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+  }
+  .swatch.active{border-color:var(--white);}
+
+  .chk{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--white);cursor:pointer;}
+  .chk input{accent-color:var(--red);width:15px;height:15px;}
+
+  .stage-wrap{
+    display:flex;flex-direction:column;align-items:center;padding:26px 12px;gap:12px;
+  }
+  .phone{
+    position:relative;
+    border:6px solid #000;
+    border-radius:26px;
+    box-shadow:0 0 0 1px var(--line), 0 30px 60px -20px rgba(226,16,31,0.35);
+    overflow:hidden;
+    background:#000;
+    cursor:grab;
+  }
+  .phone.dragging{cursor:grabbing;}
+  canvas#stage{display:block;width:100%;height:100%;}
+
+  .transport{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;}
+  .transport .btn{min-width:92px;}
+  .rec-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  .status{font-size:11.5px;color:var(--muted);text-align:center;min-height:16px;}
+
+  .mg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .mg-item{
+    aspect-ratio:1;background:#0a0404;border:1px solid var(--line);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--red);
+  }
+  .mg-item:hover{border-color:var(--red);}
+  .mg-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+  .mg-row{
+    display:flex;align-items:center;gap:6px;background:#0a0404;border:1px solid var(--line);
+    border-radius:6px;padding:6px 8px;font-size:11px;
+  }
+  .mg-row span{flex:1;text-transform:uppercase;letter-spacing:0.03em;}
+  .mg-row input[type=range]{width:60px;}
+  .mg-row button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;}
+  .mg-row button:hover{color:var(--red);}
+
+  footer{padding:16px 28px 40px;color:var(--muted);font-size:11px;text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CAPTION <span>LAB</span></h1>
+  <p>
+    Gerador de tipografia animada para legendas de Reels. Cada linha do roteiro vira um bloco:
+    a <b>primeira linha é o título</b> (abertura trabalhada), as seguintes são <b>legendas simples</b>.
+    Use <code>|</code> dentro de uma linha para forçar quebra (útil no título) e
+    <code>*palavra*</code> para marcar uma palavra em vermelho manualmente.
+  </p>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: script + creativity + fonts + palette -->
+  <div class="col">
+
+    <details open>
+      <summary>Roteiro</summary>
+      <div class="body">
+        <label class="field">
+          <b>Texto (1 bloco por linha)</b>
+          <textarea id="scriptInput" spellcheck="false"></textarea>
+        </label>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Criatividade</summary>
+      <div class="body">
+        <div class="valline">Nível de variação <b id="creativityVal">35%</b></div>
+        <input type="range" id="creativity" min="0" max="100" value="35" />
+        <button class="btn" id="shuffleBtn">🎲 Nova variação (mesmo nível)</button>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Fontes</summary>
+      <div class="body">
+        <label class="field"><b>Modo</b></label>
+        <div class="seg" id="fontModeSeg">
+          <button data-v="single" class="active">1 fonte</button>
+          <button data-v="mix">2 fontes</button>
+          <button data-v="collage">Colagem</button>
+        </div>
+        <div class="row">
+          <label class="field"><b>Fonte A</b>
+            <select id="fontA"></select>
+          </label>
+          <label class="field" id="fontBWrap"><b>Fonte B</b>
+            <select id="fontB"></select>
+          </label>
+        </div>
+        <label class="chk"><input type="checkbox" id="emphasisItalic" checked/> Itálico nas palavras em destaque</label>
+      </div>
+    </details>
+
+    <details>
+      <summary>Paleta &amp; estilo</summary>
+      <div class="body">
+        <label class="field"><b>Vermelho de destaque</b></label>
+        <div class="swatches" id="redSwatches"></div>
+        <label class="chk"><input type="checkbox" id="glowToggle" checked/> Glow nas palavras em destaque</label>
+        <label class="chk"><input type="checkbox" id="chipToggle"/> Fundo tipo "colagem" atrás das palavras</label>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- CENTER: stage -->
+  <div class="col" style="border-right:1px solid var(--line);">
+    <div class="stage-wrap">
+      <div class="phone" id="phoneFrame" style="width:337px;height:600px;">
+        <canvas id="stage" width="1080" height="1920"></canvas>
+      </div>
+      <div class="transport">
+        <button class="btn primary" id="playBtn">▶ Play</button>
+        <button class="btn" id="restartBtn">⟲ Reiniciar</button>
+        <label class="chk"><input type="checkbox" id="safeAreaToggle"/> Guia de área segura</label>
+      </div>
+      <div class="status" id="statusLine"></div>
+    </div>
+
+    <details open>
+      <summary>Animação</summary>
+      <div class="body">
+        <div class="row">
+          <label class="field"><b>Estilo</b>
+            <select id="animStyle">
+              <option value="pop">Pop palavra a palavra</option>
+              <option value="slide">Slide up</option>
+              <option value="typewriter">Typewriter</option>
+            </select>
+          </label>
+          <label class="field"><b>Velocidade</b>
+            <div class="valline"><span></span><b id="speedVal">1.0x</b></div>
+            <input type="range" id="speed" min="50" max="200" value="100" />
+          </label>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Espaçamento</summary>
+      <div class="body">
+        <div class="row">
+          <label class="field"><b>Letter-spacing</b>
+            <div class="valline"><span></span><b id="lsVal">0px</b></div>
+            <input type="range" id="letterSpacing" min="-6" max="24" value="0" />
+          </label>
+          <label class="field"><b>Line-height</b>
+            <div class="valline"><span></span><b id="lhVal">1.05</b></div>
+            <input type="range" id="lineHeight" min="90" max="160" value="105" />
+          </label>
+        </div>
+        <div class="row">
+          <label class="field"><b>Espaço entre palavras</b>
+            <div class="valline"><span></span><b id="wgVal">22px</b></div>
+            <input type="range" id="wordGap" min="0" max="80" value="22" />
+          </label>
+          <label class="field"><b>Margem lateral</b>
+            <div class="valline"><span></span><b id="padVal">90px</b></div>
+            <input type="range" id="padding" min="30" max="200" value="90" />
+          </label>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Exportar</summary>
+      <div class="body">
+        <button class="btn primary" id="recordBtn">⏺ Gravar clipe (WebM)</button>
+        <div class="row">
+          <button class="btn" id="pngBtn">Baixar frame (PNG)</button>
+          <label class="chk" style="white-space:nowrap;"><input type="checkbox" id="pngTransparent" checked/> fundo transp.</label>
+        </div>
+        <div class="row">
+          <button class="btn" id="exportPresetBtn">Baixar preset (JSON)</button>
+          <button class="btn" id="importPresetBtn">Carregar preset</button>
+        </div>
+        <input type="file" id="importPresetFile" accept="application/json" style="display:none;" />
+        <p style="font-size:10.5px;color:var(--muted);line-height:1.5;margin:2px 0 0;">
+          O WebM sai com fundo sólido (limitação dos navegadores para vídeo com alpha).
+          Para usar como overlay no seu editor, coloque a camada em modo de mesclagem
+          <b>Tela (Screen)</b> ou <b>Clarear (Lighten)</b> — o preto some e sobra só a tipografia.
+        </p>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- RIGHT: micrographics library -->
+  <div class="col">
+    <details open>
+      <summary>Biblioteca de elementos</summary>
+      <div class="body">
+        <div class="mg-grid" id="mgGrid"></div>
+        <p style="font-size:10.5px;color:var(--muted);margin:2px 0 0;">
+          Clique para adicionar ao palco. Arraste no palco para posicionar.
+        </p>
+      </div>
+    </details>
+    <details open>
+      <summary>Elementos no palco</summary>
+      <div class="body">
+        <div class="mg-list" id="mgList"></div>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<footer>Caption Lab — ferramenta de referência visual para legendas de Reels. Grave a tela ou exporte o clipe/PNG e monte no seu editor.</footer>
+
+<script>
+(function(){
+"use strict";
+
+// ---------- constants ----------
+const W = 1080, H = 1920;
+const FONTS = [
+  {id:'Anton', label:'Anton', weight:'400'},
+  {id:'Bebas Neue', label:'Bebas Neue', weight:'400'},
+  {id:'Archivo Black', label:'Archivo Black', weight:'400'},
+  {id:'Oswald', label:'Oswald', weight:'700'},
+  {id:'Teko', label:'Teko', weight:'600'},
+  {id:'Big Shoulders Display', label:'Big Shoulders', weight:'900'},
+  {id:'Passion One', label:'Passion One', weight:'900'},
+  {id:'Yellowtail', label:'Yellowtail (script)', weight:'400'},
+  {id:'Caveat', label:'Caveat (script)', weight:'700'},
+];
+const FONT_WEIGHT = {};
+FONTS.forEach(f=>FONT_WEIGHT[f.id]=f.weight);
+
+const REDS = ['#e2101f','#ff2b3d','#b3001b','#ff5a3c','#c8102e'];
+const WHITE = '#f4efe9';
+
+// ---------- state ----------
+const state = {
+  script: "NOCTURNE|REELS LAB\nCole seu *roteiro* aqui\ncada linha vira um bloco de legenda\npalavras entre *asteriscos* ficam em vermelho",
+  creativity: 35,
+  seed: 1337,
+  fontMode: 'single', // single | mix | collage
+  fontA: 'Anton',
+  fontB: 'Oswald',
+  emphasisItalic: true,
+  accent: REDS[0],
+  glow: true,
+  chip: false,
+  animStyle: 'pop',
+  speed: 1.0,
+  letterSpacing: 0,
+  lineHeight: 1.05,
+  wordGap: 22,
+  padding: 90,
+  safeArea: false,
+  micrographics: [], // {id, type, x, y, rot, scale, addedAt}
+  playing: false,
+  elapsedMs: 0,
+  lastFrameTs: 0,
+  dragId: null,
+  dragOffset: {x:0,y:0},
+  recording: false,
+};
+
+let nextMgId = 1;
+
+// ---------- RNG ----------
+function mulberry32(a){
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ---------- parsing ----------
+function parseScript(text){
+  const rawLines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  return rawLines.map((line, idx)=>{
+    const groups = line.split('|').map(g=>g.trim()).filter(g=>g.length>0);
+    const words = [];
+    groups.forEach((g, gi)=>{
+      const tokens = g.split(/\s+/).filter(Boolean);
+      tokens.forEach((tok, ti)=>{
+        const forced = /^\*.+\*$/.test(tok);
+        const clean = tok.replace(/^\*|\*$/g,'');
+        words.push({
+          text: clean,
+          forced,
+          lineBreakBefore: (ti===0 && gi>0),
+        });
+      });
+    });
+    return { isTitle: idx===0, raw: line, words };
+  });
+}
+
+// ---------- canvas / fonts ----------
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+
+function setWordFont(c, fontId, size, italic){
+  const weight = FONT_WEIGHT[fontId] || '400';
+  c.font = `${italic ? 'italic ' : ''}${weight} ${size}px "${fontId}"`;
+}
+
+// ---------- word styling (creativity engine) ----------
+function computeBeatStyles(beat, cfg, rng){
+  const chaos = cfg.creativity/100;
+  const isTitle = beat.isTitle;
+  const baseSize = isTitle ? 128 : 78;
+  const n = beat.words.length;
+
+  return beat.words.map((w, i)=>{
+    let emphasis = w.forced;
+    if(!emphasis && !isTitle){
+      const p = 0.10 + chaos*0.55;
+      emphasis = rng() < p/n*2.2;
+    }
+    if(!emphasis && isTitle && n>1){
+      emphasis = (i === Math.floor(n*0.66)) && chaos>0.15;
+    }
+
+    let font = cfg.fontA;
+    if(cfg.fontMode === 'mix'){
+      if(emphasis) font = cfg.fontB;
+      else if(rng() < chaos*0.35) font = cfg.fontB;
+    } else if(cfg.fontMode === 'collage'){
+      const roll = rng();
+      if(roll < 0.15 + chaos*0.25) font = cfg.fontB;
+      else if(roll < 0.15 + chaos*0.25 + (0.08+chaos*0.18)) font = 'Yellowtail';
+      else font = cfg.fontA;
+    }
+
+    const rotRange = (cfg.fontMode==='collage' ? 12 : 5) * chaos;
+    const rotation = (rng()-0.5) * 2 * rotRange * Math.PI/180;
+    const scaleJitter = 1 + (rng()-0.5) * 0.16 * chaos;
+    const emphasisScale = emphasis ? 1.22 : 1;
+    const dy = cfg.fontMode==='collage' ? (rng()-0.5)*22*chaos : 0;
+    const chip = cfg.chip && cfg.fontMode==='collage' && rng() < (0.2+chaos*0.4);
+
+    return {
+      text: w.text,
+      lineBreakBefore: w.lineBreakBefore,
+      font,
+      size: Math.round(baseSize * emphasisScale * scaleJitter),
+      color: emphasis ? cfg.accent : WHITE,
+      emphasis,
+      italic: emphasis && cfg.emphasisItalic,
+      rotation,
+      dy,
+      chip,
+    };
+  });
+}
+
+function wrapWords(c, words, maxWidth, gap){
+  const lines = [];
+  let current = [];
+  let currentWidth = 0;
+  words.forEach((w, i)=>{
+    setWordFont(c, w.font, w.size, w.italic);
+    const width = c.measureText(w.text).width;
+    const addGap = current.length ? gap : 0;
+    const forceBreak = w.lineBreakBefore && current.length>0;
+    if(forceBreak || (currentWidth + addGap + width > maxWidth && current.length>0)){
+      lines.push(current);
+      current = [];
+      currentWidth = 0;
+    }
+    const g2 = current.length ? gap : 0;
+    current.push({...w, idx:i, width});
+    currentWidth += g2 + width;
+  });
+  if(current.length) lines.push(current);
+  return lines;
+}
+
+// ---------- timeline ----------
+function buildTimeline(){
+  const cfg = state;
+  const beats = parseScript(cfg.script);
+  const rng = mulberry32(cfg.seed);
+  const maxWidth = W - cfg.padding*2;
+  const speed = cfg.speed;
+
+  let t = 0.4; // small lead-in
+  const built = beats.map(beat=>{
+    const styled = computeBeatStyles(beat, cfg, rng);
+
+    let lines;
+    if(beat.isTitle){
+      let attempt = styled.map(w=>({...w}));
+      let scale = 1;
+      for(let iter=0; iter<20; iter++){
+        const scaled = attempt.map(w=>({...w, size: Math.round(w.size*scale)}));
+        lines = wrapWords(ctx, scaled, maxWidth, cfg.wordGap);
+        const lh = (scaled[0]?scaled[0].size:128) * cfg.lineHeight;
+        const blockH = lines.length * lh;
+        if(blockH <= 780 || scale < 0.45) { attempt = scaled; break; }
+        scale *= 0.9;
+      }
+      lines = wrapWords(ctx, attempt, maxWidth, cfg.wordGap);
+    } else {
+      lines = wrapWords(ctx, styled, maxWidth, cfg.wordGap);
+    }
+
+    const wordCount = styled.length;
+    const perWord = beat.isTitle ? 0.16 : (0.42 / speed);
+    const duration = beat.isTitle
+      ? Math.max(1.6, 0.5 + wordCount*perWord) / speed
+      : Math.max(1.1, wordCount * perWord) + 0.5/speed;
+
+    const wordStart = [];
+    let acc = 0;
+    lines.forEach(line=>{
+      line.forEach(w=>{
+        wordStart.push(acc);
+        acc += beat.isTitle ? (0.16/speed) : (0.30/speed);
+      });
+    });
+
+    const beatObj = { isTitle: beat.isTitle, lines, start: t, duration, wordStart };
+    t += duration + (beat.isTitle ? 0.5 : 0.25)/speed;
+    return beatObj;
+  });
+
+  return { beats: built, total: t + 0.6 };
+}
+
+let timeline = null;
+let timelineDirty = true;
+
+function markDirty(){ timelineDirty = true; }
+
+// ---------- micrographics ----------
+const MG_TYPES = {
+  spark:{label:'Faísca', draw:drawSpark},
+  ring:{label:'Anel', draw:drawRing},
+  arrow:{label:'Seta', draw:drawArrow},
+  cross:{label:'Mira', draw:drawCross},
+  line:{label:'Linha', draw:drawLine},
+  dots:{label:'Pontilhado', draw:drawDots},
+  scan:{label:'Scanlines', draw:drawScan},
+  echo:{label:'Eco do título', draw:drawEcho},
+};
+
+function drawSpark(c,s,color){
+  c.strokeStyle=color; c.lineWidth=6*s; c.lineCap='round';
+  [0,90,45,135].forEach(a=>{
+    const r=a*Math.PI/180;
+    c.beginPath();
+    c.moveTo(Math.cos(r)*-40*s, Math.sin(r)*-40*s);
+    c.lineTo(Math.cos(r)*40*s, Math.sin(r)*40*s);
+    c.stroke();
+  });
+}
+function drawRing(c,s,color){
+  c.strokeStyle=color; c.lineWidth=7*s;
+  c.beginPath(); c.arc(0,0,45*s,0,Math.PI*2); c.stroke();
+}
+function drawArrow(c,s,color){
+  c.strokeStyle=color; c.fillStyle=color; c.lineWidth=8*s; c.lineCap='round';
+  c.beginPath(); c.moveTo(-45*s,25*s); c.lineTo(35*s,-25*s); c.stroke();
+  c.beginPath();
+  c.moveTo(35*s,-25*s); c.lineTo(10*s,-25*s); c.lineTo(35*s,0*s); c.closePath(); c.fill();
+}
+function drawCross(c,s,color){
+  c.strokeStyle=color; c.lineWidth=4*s;
+  c.beginPath(); c.moveTo(-50*s,0); c.lineTo(50*s,0); c.moveTo(0,-50*s); c.lineTo(0,50*s); c.stroke();
+  c.beginPath(); c.arc(0,0,26*s,0,Math.PI*2); c.stroke();
+}
+function drawLine(c,s,color){
+  c.strokeStyle=color; c.lineWidth=8*s; c.lineCap='round';
+  c.beginPath(); c.moveTo(-90*s,0); c.lineTo(90*s,0); c.stroke();
+}
+function drawDots(c,s,color){
+  c.fillStyle=color;
+  for(let x=-2;x<=2;x++) for(let y=-1;y<=1;y++){
+    c.beginPath(); c.arc(x*20*s,y*20*s,5*s,0,Math.PI*2); c.fill();
+  }
+}
+function drawScan(c,s,color){
+  c.strokeStyle=color; c.globalAlpha=0.5; c.lineWidth=2*s;
+  for(let i=-4;i<=4;i++){
+    c.beginPath(); c.moveTo(-90*s,i*14*s); c.lineTo(90*s,i*14*s); c.stroke();
+  }
+  c.globalAlpha=1;
+}
+function drawEcho(c,s,color){
+  const t = parseScript(state.script)[0];
+  const txt = t ? t.words.map(w=>w.text).join(' ') : 'ECO';
+  c.font = `400 ${170*s}px "Anton"`;
+  c.textAlign='center'; c.textBaseline='middle';
+  c.fillStyle = color;
+  c.fillText(txt.toUpperCase(), 0, 0);
+}
+
+function addMicrographic(type){
+  state.micrographics.push({
+    id: nextMgId++,
+    type,
+    x: W/2 + (Math.random()-0.5)*160,
+    y: type==='echo' ? H*0.38 : H*0.55 + (Math.random()-0.5)*160,
+    rot: 0,
+    scale: type==='echo' ? 1.1 : 1,
+    born: performance.now(),
+  });
+  renderMgList();
+}
+
+function removeMicrographic(id){
+  state.micrographics = state.micrographics.filter(m=>m.id!==id);
+  renderMgList();
+}
+
+// ---------- drawing ----------
+function drawBackground(c, tsec){
+  const g = c.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#160303');
+  g.addColorStop(0.5,'#0b0505');
+  g.addColorStop(1,'#050202');
+  c.fillStyle = g;
+  c.fillRect(0,0,W,H);
+
+  const rg = c.createRadialGradient(W/2, H*0.32, 60, W/2, H*0.32, W*0.9);
+  rg.addColorStop(0, 'rgba(226,16,31,0.28)');
+  rg.addColorStop(1, 'rgba(226,16,31,0)');
+  c.fillStyle = rg;
+  c.fillRect(0,0,W,H);
+}
+
+function drawMicrographics(c, tsec){
+  state.micrographics.forEach(m=>{
+    const def = MG_TYPES[m.type];
+    if(!def) return;
+    const age = (performance.now() - m.born)/1000;
+    const pop = Math.min(1, age/0.5);
+    const eased = 1 - Math.pow(1-pop, 3);
+    c.save();
+    c.translate(m.x, m.y);
+    c.rotate(m.rot);
+    c.globalAlpha = m.type==='echo' ? 0.09 * eased : 0.85 * eased;
+    const s = m.scale * (0.6 + 0.4*eased);
+    def.draw(c, s, m.type==='echo' ? WHITE : state.accent);
+    c.restore();
+  });
+}
+
+function easeOutBack(x){
+  const c1 = 1.70158, c3 = c1+1;
+  return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2);
+}
+
+function drawBeat(c, beat, localT){
+  const lh = (beat.lines[0]&&beat.lines[0][0] ? beat.lines[0][0].size : (beat.isTitle?128:78)) * state.lineHeight;
+  const blockH = beat.lines.length * lh;
+  const startY = beat.isTitle ? H*0.36 - blockH/2 : H*0.72 - blockH/2;
+
+  let wi = 0;
+  beat.lines.forEach((line, li)=>{
+    const totalW = line.reduce((a,w,idx)=> a + w.width + (idx>0?state.wordGap:0), 0);
+    let x = W/2 - totalW/2;
+    const y = startY + li*lh + lh/2;
+
+    line.forEach(w=>{
+      const wStart = beat.wordStart[wi]!==undefined ? beat.wordStart[wi] : 0;
+      wi++;
+      const dur = beat.isTitle ? 0.5 : 0.32;
+      const p = Math.min(1, Math.max(0, (localT - wStart)/dur));
+      if(p <= 0){ x += w.width + state.wordGap; return; }
+      const eased = easeOutBack(p);
+
+      c.save();
+      const cx = x + w.width/2;
+      c.translate(cx, y + w.dy);
+      c.rotate(w.rotation);
+      let visScale, opacity, ty;
+      if(state.animStyle === 'slide'){
+        visScale = 1;
+        opacity = p;
+        ty = (1-eased) * 26;
+      } else if(state.animStyle === 'typewriter'){
+        visScale = 1;
+        opacity = p > 0.02 ? 1 : 0;
+        ty = 0;
+      } else {
+        visScale = 0.55 + eased*0.45;
+        opacity = Math.min(1, p*1.6);
+        ty = (1-eased) * 14;
+      }
+      c.translate(0, ty);
+      c.scale(visScale, visScale);
+      c.globalAlpha = opacity;
+
+      if(w.chip){
+        setWordFont(c, w.font, w.size, w.italic);
+        const pad = 10;
+        c.fillStyle = 'rgba(244,239,233,0.94)';
+        c.fillRect(-w.width/2-pad, -w.size*0.62, w.width+pad*2, w.size*0.9);
+      }
+
+      setWordFont(c, w.font, w.size, w.italic);
+      c.textAlign='center'; c.textBaseline='alphabetic';
+      if(state.letterSpacing !== 0){ try{ c.letterSpacing = state.letterSpacing+'px'; }catch(e){} }
+
+      if(w.emphasis && state.glow){
+        c.shadowColor = state.accent;
+        c.shadowBlur = 28;
+      } else {
+        c.shadowColor = 'rgba(0,0,0,0.55)';
+        c.shadowBlur = 10;
+        c.shadowOffsetY = 3;
+      }
+      c.fillStyle = w.chip ? '#0a0404' : w.color;
+      c.fillText(w.text, 0, w.size*0.34);
+      c.shadowBlur = 0; c.shadowOffsetY = 0;
+      if(state.letterSpacing !== 0){ try{ c.letterSpacing = '0px'; }catch(e){} }
+      c.restore();
+
+      x += w.width + state.wordGap;
+    });
+  });
+}
+
+function drawSafeArea(c){
+  c.save();
+  c.strokeStyle = 'rgba(244,239,233,0.5)';
+  c.setLineDash([14,10]);
+  c.lineWidth = 3;
+  c.strokeRect(40, 260, W-80, H-260-360);
+  c.restore();
+}
+
+function render(skipBg, skipGuide){
+  if(timelineDirty){ timeline = buildTimeline(); timelineDirty = false; }
+  const tsec = state.elapsedMs/1000;
+  const total = timeline.total;
+  const loopT = total>0 ? (tsec % total) : 0;
+
+  ctx.clearRect(0,0,W,H);
+  if(!skipBg) drawBackground(ctx, loopT);
+
+  drawMicrographics(ctx, loopT);
+
+  timeline.beats.forEach(beat=>{
+    const local = loopT - beat.start;
+    if(local >= -0.05 && local <= beat.duration + 0.4){
+      drawBeat(ctx, beat, Math.max(0, local));
+    }
+  });
+
+  if(state.safeArea && !skipGuide) drawSafeArea(ctx);
+}
+
+// ---------- render loop ----------
+function tick(ts){
+  if(state.playing){
+    if(!state.lastFrameTs) state.lastFrameTs = ts;
+    state.elapsedMs += (ts - state.lastFrameTs);
+    state.lastFrameTs = ts;
+  }
+  render();
+  requestAnimationFrame(tick);
+}
+
+// ---------- UI wiring ----------
+function bindRange(id, valEl, fmt, onChange){
+  const el = document.getElementById(id);
+  el.addEventListener('input', ()=>{
+    if(valEl) document.getElementById(valEl).textContent = fmt(el.value);
+    onChange(el.value);
+    markDirty();
+  });
+}
+
+document.getElementById('scriptInput').value = state.script;
+document.getElementById('scriptInput').addEventListener('input', e=>{
+  state.script = e.target.value; markDirty();
+});
+
+bindRange('creativity','creativityVal', v=>v+'%', v=>state.creativity=+v);
+document.getElementById('shuffleBtn').addEventListener('click', ()=>{
+  state.seed = Math.floor(Math.random()*1e9);
+  markDirty();
+});
+
+FONTS.forEach(f=>{
+  const optA = document.createElement('option'); optA.value=f.id; optA.textContent=f.label;
+  document.getElementById('fontA').appendChild(optA);
+  const optB = document.createElement('option'); optB.value=f.id; optB.textContent=f.label;
+  document.getElementById('fontB').appendChild(optB);
+});
+document.getElementById('fontA').value = state.fontA;
+document.getElementById('fontB').value = state.fontB;
+document.getElementById('fontA').addEventListener('change', e=>{ state.fontA=e.target.value; markDirty(); });
+document.getElementById('fontB').addEventListener('change', e=>{ state.fontB=e.target.value; markDirty(); });
+
+document.querySelectorAll('#fontModeSeg button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#fontModeSeg button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.fontMode = btn.dataset.v;
+    document.getElementById('fontBWrap').style.display = state.fontMode==='single' ? 'none' : 'flex';
+    markDirty();
+  });
+});
+document.getElementById('fontBWrap').style.display = 'none';
+
+document.getElementById('emphasisItalic').addEventListener('change', e=>{ state.emphasisItalic=e.target.checked; markDirty(); });
+
+const swatchWrap = document.getElementById('redSwatches');
+REDS.forEach((color,i)=>{
+  const s = document.createElement('div');
+  s.className = 'swatch' + (i===0?' active':'');
+  s.style.background = color;
+  s.addEventListener('click', ()=>{
+    document.querySelectorAll('.swatch').forEach(el=>el.classList.remove('active'));
+    s.classList.add('active');
+    state.accent = color;
+    markDirty();
+  });
+  swatchWrap.appendChild(s);
+});
+
+document.getElementById('glowToggle').addEventListener('change', e=>{ state.glow=e.target.checked; markDirty(); });
+document.getElementById('chipToggle').addEventListener('change', e=>{ state.chip=e.target.checked; markDirty(); });
+
+document.getElementById('animStyle').addEventListener('change', e=>{ state.animStyle=e.target.value; markDirty(); });
+bindRange('speed','speedVal', v=>(v/100).toFixed(1)+'x', v=>state.speed=v/100);
+bindRange('letterSpacing','lsVal', v=>v+'px', v=>state.letterSpacing=+v);
+bindRange('lineHeight','lhVal', v=>(v/100).toFixed(2), v=>state.lineHeight=v/100);
+bindRange('wordGap','wgVal', v=>v+'px', v=>state.wordGap=+v);
+bindRange('padding','padVal', v=>v+'px', v=>state.padding=+v);
+
+document.getElementById('safeAreaToggle').addEventListener('change', e=>{ state.safeArea=e.target.checked; });
+
+document.getElementById('playBtn').addEventListener('click', ()=>{
+  state.playing = !state.playing;
+  state.lastFrameTs = 0;
+  document.getElementById('playBtn').textContent = state.playing ? '⏸ Pausar' : '▶ Play';
+});
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  state.elapsedMs = 0; state.lastFrameTs = 0;
+});
+
+// micrographics library grid
+const mgGrid = document.getElementById('mgGrid');
+Object.keys(MG_TYPES).forEach(type=>{
+  const cell = document.createElement('div');
+  cell.className = 'mg-item';
+  cell.title = MG_TYPES[type].label;
+  const mini = document.createElement('canvas');
+  mini.width = 60; mini.height = 60;
+  const mctx = mini.getContext('2d');
+  mctx.translate(30,30); mctx.scale(0.45,0.45);
+  MG_TYPES[type].draw(mctx, 1, '#e2101f');
+  cell.appendChild(mini);
+  cell.addEventListener('click', ()=> addMicrographic(type));
+  mgGrid.appendChild(cell);
+});
+
+function renderMgList(){
+  const list = document.getElementById('mgList');
+  list.innerHTML = '';
+  if(state.micrographics.length===0){
+    list.innerHTML = '<div style="color:var(--muted);font-size:11px;">Nenhum elemento adicionado ainda.</div>';
+    return;
+  }
+  state.micrographics.forEach(m=>{
+    const row = document.createElement('div');
+    row.className = 'mg-row';
+    row.innerHTML = `<span>${MG_TYPES[m.type].label}</span>`;
+    const rot = document.createElement('input');
+    rot.type='range'; rot.min=-180; rot.max=180; rot.value = Math.round(m.rot*180/Math.PI);
+    rot.addEventListener('input', ()=>{ m.rot = rot.value*Math.PI/180; });
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.addEventListener('click', ()=> removeMicrographic(m.id));
+    row.appendChild(rot);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+renderMgList();
+
+// ---------- drag on stage ----------
+const phoneFrame = document.getElementById('phoneFrame');
+function canvasCoordsFromEvent(e){
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width * W;
+  const y = (e.clientY - rect.top) / rect.height * H;
+  return {x,y};
+}
+canvas.addEventListener('pointerdown', e=>{
+  const {x,y} = canvasCoordsFromEvent(e);
+  let best=null, bestD=70;
+  state.micrographics.forEach(m=>{
+    const d = Math.hypot(m.x-x, m.y-y);
+    if(d < bestD){ bestD=d; best=m; }
+  });
+  if(best){
+    state.dragId = best.id;
+    state.dragOffset = {x: best.x-x, y: best.y-y};
+    phoneFrame.classList.add('dragging');
+    canvas.setPointerCapture(e.pointerId);
+  }
+});
+canvas.addEventListener('pointermove', e=>{
+  if(state.dragId==null) return;
+  const {x,y} = canvasCoordsFromEvent(e);
+  const m = state.micrographics.find(mm=>mm.id===state.dragId);
+  if(m){ m.x = x+state.dragOffset.x; m.y = y+state.dragOffset.y; }
+});
+function endDrag(){ state.dragId=null; phoneFrame.classList.remove('dragging'); }
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+// ---------- responsive phone size ----------
+function resizePhone(){
+  const maxH = Math.min(640, window.innerHeight*0.62);
+  const h = maxH;
+  const w = h * (W/H);
+  phoneFrame.style.height = h+'px';
+  phoneFrame.style.width = w+'px';
+}
+window.addEventListener('resize', resizePhone);
+resizePhone();
+
+// ---------- export: PNG ----------
+document.getElementById('pngBtn').addEventListener('click', ()=>{
+  const transparent = document.getElementById('pngTransparent').checked;
+  render(transparent, true);
+  const url = canvas.toDataURL('image/png');
+  render(); // restore normal render
+  const a = document.createElement('a');
+  a.href = url; a.download = 'caption-lab-frame.png'; a.click();
+});
+
+// ---------- export: JSON preset ----------
+document.getElementById('exportPresetBtn').addEventListener('click', ()=>{
+  const {playing, elapsedMs, lastFrameTs, dragId, dragOffset, recording, ...preset} = state;
+  const blob = new Blob([JSON.stringify(preset, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'caption-lab-preset.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('importPresetBtn').addEventListener('click', ()=>{
+  document.getElementById('importPresetFile').click();
+});
+document.getElementById('importPresetFile').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      Object.assign(state, data);
+      document.getElementById('scriptInput').value = state.script;
+      document.getElementById('creativity').value = state.creativity;
+      document.getElementById('creativityVal').textContent = state.creativity+'%';
+      document.getElementById('fontA').value = state.fontA;
+      document.getElementById('fontB').value = state.fontB;
+      document.querySelectorAll('#fontModeSeg button').forEach(b=>{
+        b.classList.toggle('active', b.dataset.v===state.fontMode);
+      });
+      document.getElementById('fontBWrap').style.display = state.fontMode==='single'?'none':'flex';
+      document.getElementById('emphasisItalic').checked = state.emphasisItalic;
+      document.getElementById('glowToggle').checked = state.glow;
+      document.getElementById('chipToggle').checked = state.chip;
+      document.getElementById('animStyle').value = state.animStyle;
+      document.getElementById('speed').value = Math.round(state.speed*100);
+      document.getElementById('speedVal').textContent = state.speed.toFixed(1)+'x';
+      document.getElementById('letterSpacing').value = state.letterSpacing;
+      document.getElementById('lsVal').textContent = state.letterSpacing+'px';
+      document.getElementById('lineHeight').value = Math.round(state.lineHeight*100);
+      document.getElementById('lhVal').textContent = state.lineHeight.toFixed(2);
+      document.getElementById('wordGap').value = state.wordGap;
+      document.getElementById('wgVal').textContent = state.wordGap+'px';
+      document.getElementById('padding').value = state.padding;
+      document.getElementById('padVal').textContent = state.padding+'px';
+      renderMgList();
+      markDirty();
+    }catch(err){
+      alert('Preset inválido: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// ---------- export: WebM recording ----------
+document.getElementById('recordBtn').addEventListener('click', async ()=>{
+  if(state.recording) return;
+  const btn = document.getElementById('recordBtn');
+  const statusEl = document.getElementById('statusLine');
+
+  if(timelineDirty){ timeline = buildTimeline(); timelineDirty = false; }
+  const durationMs = Math.max(2000, timeline.total*1000);
+
+  const mimeCandidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+  const mimeType = mimeCandidates.find(m=>window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+  if(!mimeType){
+    alert('Seu navegador não suporta gravação de canvas (MediaRecorder). Tente Chrome/Edge.');
+    return;
+  }
+
+  const wasPlaying = state.playing;
+  state.playing = false;
+  state.elapsedMs = 0; state.lastFrameTs = 0;
+  render();
+
+  const stream = canvas.captureStream(30);
+  const recorder = new MediaRecorder(stream, {mimeType});
+  const chunks = [];
+  recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
+
+  state.recording = true;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="rec-dot"></span> Gravando…';
+
+  recorder.start();
+  state.playing = true;
+  state.lastFrameTs = 0;
+
+  const startTs = performance.now();
+  function updateStatus(){
+    const elapsed = ((performance.now()-startTs)/1000).toFixed(1);
+    const total = (durationMs/1000).toFixed(1);
+    statusEl.textContent = `Gravando ${elapsed}s / ${total}s`;
+    if(state.recording) requestAnimationFrame(updateStatus);
+  }
+  updateStatus();
+
+  await new Promise(res=>setTimeout(res, durationMs + 200));
+
+  recorder.stop();
+  await new Promise(res=> recorder.onstop = res);
+
+  state.recording = false;
+  state.playing = wasPlaying;
+  btn.disabled = false;
+  btn.textContent = '⏺ Gravar clipe (WebM)';
+  statusEl.textContent = 'Clipe pronto.';
+
+  const blob = new Blob(chunks, {type:'video/webm'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'caption-lab-clip.webm'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+});
+
+// ---------- boot ----------
+const fontFaces = FONTS.map(f=> `${FONT_WEIGHT[f.id]} 40px "${f.id}"`);
+Promise.all(fontFaces.map(f=> document.fonts.load(f))).finally(()=>{
+  document.fonts.ready.finally(()=>{
+    markDirty();
+    requestAnimationFrame(tick);
+  });
+});
+
+})();
+</script>
+</body>
+</html>
